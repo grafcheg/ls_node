@@ -12,29 +12,24 @@ if (!fs.existsSync(fromDir)) {
   process.exit(9);
 }
 
-if (!fs.existsSync(toDir)) {
-  fs.mkdir(toDir, { recursive: true }, (err) => {
-    if (err) throw err;
-  });
-} else {
-  console.error('Can not create distination folder or folder already exists');
-  process.exit(9);
-}
+fs.mkdir(toDir, { recursive: true }, (err) => {
+  if (err) throw err;
+
+  readDir(fromDir, 0);
+});
 
 const copyFn = (item, itemLink) => {
   const firstSymbol = item.substring(0, 1).toUpperCase();
   const targetDir = path.join(toDir, firstSymbol);
 
-  if (!fs.existsSync(targetDir)) {
-    fs.mkdir(targetDir, { recursive: true }, (err) => {
-      if (err) throw err;
-    });
-  }
+  fs.mkdir(targetDir, { recursive: true }, (err) => {
+    if (err) throw err;
 
-  fs.link(itemLink, path.join(targetDir, item), err => {
-    if (err) {
-      console.error(err.message);
-    }
+    fs.link(itemLink, path.join(targetDir, item), err => {
+      if (err) {
+        console.error(err.message);
+      }
+    });
   });
 };
 
@@ -52,8 +47,6 @@ const readDir = (base, level) => {
     }
   });
 };
-
-readDir(fromDir, 0);
 
 if (deleteArg) {
   fs.rmdir(fromDir, { recursive: true }, err => {
