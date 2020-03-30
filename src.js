@@ -13,7 +13,9 @@ if (!fs.existsSync(fromDir)) {
 }
 
 if (!fs.existsSync(toDir)) {
-  fs.mkdirSync(toDir);
+  fs.mkdir(toDir, { recursive: true }, (err) => {
+    if (err) throw err;
+  });
 } else {
   console.error('Can not create distination folder or folder already exists');
   process.exit(9);
@@ -24,7 +26,9 @@ const copyFn = (item, itemLink) => {
   const targetDir = path.join(toDir, firstSymbol);
 
   if (!fs.existsSync(targetDir)) {
-    fs.mkdirSync(targetDir);
+    fs.mkdir(targetDir, { recursive: true }, (err) => {
+      if (err) throw err;
+    });
   }
 
   fs.link(itemLink, path.join(targetDir, item), err => {
